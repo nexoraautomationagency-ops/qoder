@@ -50,7 +50,7 @@ function saveSessions() {
     try {
         sessionSavePending = true;
         if (sessionSaveTimer) return;
-        sessionSaveTimer = setTimeout(() => {
+        sessionSaveTimer = setTimeout(async () => {
             try {
                 if (!sessionSavePending) return;
                 const data = {
@@ -60,7 +60,7 @@ function saveSessions() {
                     adminStates: Array.from(adminStates.entries()),
                     pendingApprovals: Array.from(pendingApprovals.entries())
                 };
-                atomicWriteSessions(data);
+                await atomicWriteSessions(data);
             } catch (error) {
                 console.error('[Persistence] Error saving sessions:', error.message);
             } finally {
@@ -74,18 +74,18 @@ function saveSessions() {
     }
 }
 
-function atomicWriteSessions(data) {
+async function atomicWriteSessions(data) {
     const tempFile = `${SESSION_FILE}.tmp`;
     try {
-        fs.writeFileSync(tempFile, JSON.stringify(data, null, 2));
-        fs.renameSync(tempFile, SESSION_FILE);
+        await fs.promises.writeFile(tempFile, JSON.stringify(data, null, 2));
+        await fs.promises.rename(tempFile, SESSION_FILE);
     } catch (error) {
         console.error('[Persistence] Atomic write failed:', error.message);
-        try { fs.writeFileSync(SESSION_FILE, JSON.stringify(data, null, 2)); } catch (e) {}
+        try { await fs.promises.writeFile(SESSION_FILE, JSON.stringify(data, null, 2)); } catch (e) {}
     }
 }
 
-function saveSessionsNow() {
+async function saveSessionsNow() {
     try {
         if (sessionSaveTimer) {
             clearTimeout(sessionSaveTimer);
@@ -98,7 +98,7 @@ function saveSessionsNow() {
             adminStates: Array.from(adminStates.entries()),
             pendingApprovals: Array.from(pendingApprovals.entries())
         };
-        atomicWriteSessions(data);
+        await atomicWriteSessions(data);
         sessionSavePending = false;
     } catch (error) {
         console.error('[Persistence] Error saving sessions:', error.message);

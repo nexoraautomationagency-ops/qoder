@@ -1,6 +1,6 @@
 const { isUserAdmin } = require('./security');
 const stateMachine = require('./state-machine');
-const { isRateLimited, getCanonicalId, processedMessages, saveSessions } = stateMachine;
+const { isRateLimited, getCanonicalId, processedMessages, saveSessions, migrateLidSession } = stateMachine;
 const { sendWA } = require('./whatsapp');
 const { handleAdminCommand } = require('./handlers/admin');
 const { handleStudentMessage } = require('./handlers/student');
@@ -32,7 +32,6 @@ async function routeMessage(msg, client) {
     }
 
     // Migrate any LID-based sessions to canonical JID
-    const { migrateLidSession } = require('./state-machine');
     if (from) migrateLidSession(msg.from, from);
 
     // Filter non-1:1 chats

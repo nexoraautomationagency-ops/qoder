@@ -79,8 +79,8 @@ const MENU_KEYWORD = 'menu';
 const SESSION_TIMEOUT_MS = 2 * 24 * 60 * 60 * 1000; // 48 hours
 const MESSAGE_RATE_WINDOW_MS = 15 * 1000;
 const MESSAGE_RATE_MAX = 10;
-const ADMIN_BROADCAST_DELAY_MS = 800;
-const OUTBOUND_DELAY_MS = 250;
+const ADMIN_BROADCAST_DELAY_MS = 200;
+const OUTBOUND_DELAY_MS = 75;
 
 function updateEnvFile(key, value) {
     try {

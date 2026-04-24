@@ -2,8 +2,8 @@ const config = require('./config');
 const { getBankLabel } = require('./config');
 
 // ============================================================================
-// ALL BOT MESSAGES — Sri Lankan Sinhala-English Mix Style
-// Rules: Short (2-6 lines max), friendly, natural chat feel
+// ALL BOT MESSAGES — Simple English
+// Rules: Short (2-6 lines max), friendly, easy for students to understand
 // ============================================================================
 
 function mainMenu() {
@@ -17,8 +17,8 @@ _Type *menu* anytime to come back here_`;
 }
 
 function tooManyMessages() {
-    return `⚠️ Message godak awa 😕
-Tikak idala nawatha try karanna`;
+    return `⚠️ You sent too many messages 😕
+Please wait a bit and try again`;
 }
 
 function systemError() {
@@ -27,16 +27,16 @@ Type *menu* to start again`;
 }
 
 function cancelDone() {
-    return `👋 Cancel kala. *menu* type karanna`;
+    return `👋 Cancelled. Type *menu* to go back`;
 }
 
 function backInvalid() {
-    return `🔙 Meken backward karanna ba 😕
-*menu* type karanna`;
+    return `🔙 You can't go back from here 😕
+Type *menu* to start over`;
 }
 
 function backMenuNewStudent() {
-    return `🔙 *Edit karanna oneda?*
+    return `🔙 *Want to edit?*
 
 1. Name
 2. School
@@ -45,96 +45,96 @@ function backMenuNewStudent() {
 5. Month
 6. Tute Choice
 
-_Number eka type karanna_`;
+_Type the number_`;
 }
 
 function backMenuOldStudent() {
-    return `🔙 *Edit karanna oneda?*
+    return `🔙 *Want to edit?*
 
 1. Student ID
 2. Tute Choice
 3. Month
 
-_Number eka type karanna_`;
+_Type the number_`;
 }
 
 // --- REGISTRATION FLOW ---
 
 function askName() {
-    return `🤝 Full name eka ewanna
+    return `🤝 Please send your full name
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function askSchool(name) {
     return `Nice to meet you, *${name}*! 😊
-School eka mokakda?
+Which school do you go to?
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function askPhone() {
-    return `📱 Phone number eka ewanna
+    return `📱 Please send your phone number
 (Example: 0771234567)
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function phoneInvalid() {
-    return `❌ Phone number eka waradi 😕
-077/076 wage 10 digit number ekak danna`;
+    return `❌ Invalid phone number 😕
+Please enter a 10-digit number starting with 077 or 076`;
 }
 
 function phoneAlreadyRegistered(names) {
-    return `🔍 Me number ekata *${names}* already register wela thiyenawa.
+    return `🔍 This number is already registered under *${names}*.
 
-Wena student kenek nam continue karanna.
+If you are a different student, please continue.
 
-Grade eka mokakda? (6-11)`;
+What is your grade? (6-11)`;
 }
 
 function askGrade() {
-    return `Grade eka mokakda? (6-11)
+    return `What is your grade? (6-11)
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function gradeInvalid() {
-    return `❌ Grade 6-11 athara number ekak witharak ewanna`;
+    return `❌ Please enter a grade between 6 and 11 only`;
 }
 
 function askMonth() {
-    return `🗓️ pay karana Month eka mokakda?
+    return `🗓️ Which month are you paying for?
 (Example: April)
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function monthInvalid() {
-    return `❌ Month eka waradi 😕
-April, May wage ewanna`;
+    return `❌ Invalid month 😕
+Please enter like: April, May`;
 }
 
 function monthRegistered(month) {
-    return `✅ *${month}* walata register kala 👍
-Tutes oneda? (yes / no)
+    return `✅ Registered for *${month}* 👍
+Want tutes? (yes / no)
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function askTutes() {
-    return `📦 Tutes oneda? (yes / no)
+    return `📦 Want tutes? (yes / no)
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function tutesInvalid() {
-    return `❌ *yes* or *no* witharak ewanna 😊`;
+    return `❌ Please only reply with *yes* or *no* 😊`;
 }
 
 function askAddress() {
-    return `🏠 Full address eka ewanna
-Tutes post karanna 
+    return `🏠 Please send your full address
+So we can post the tutes to you
 
 *back* = edit menu | *menu* = exit`;
 }
@@ -144,13 +144,13 @@ function feeInfo(fee) {
 
 ${getBankLabel()}
 
-📸 Pay karala Receipt eka upload karanna
+📸 After paying, please upload the receipt
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function receiptRequired() {
-    return `❌ Receipt eka image/PDF ekak widiyata upload karanna`;
+    return `❌ Please upload the receipt as an image or PDF`;
 }
 
 function receiptUploading() {
@@ -158,8 +158,8 @@ function receiptUploading() {
 }
 
 function receiptUploadFailed() {
-    return `⚠️ Receipt upload eka fail una 😕
-Clear photo ekak ewanna (JPG/PNG/PDF)`;
+    return `⚠️ Receipt upload failed 😕
+Please send a clear photo (JPG/PNG/PDF)`;
 }
 
 function registrationPreview(data) {
@@ -179,30 +179,30 @@ Tutes: ${data.wantsTutes ? 'Yes' : 'No'}`;
 }
 
 function registrationSubmitted(idNumber) {
-    return `✅ Admission eka submit kala 👍
+    return `✅ Admission submitted 👍
 
 🆔 *Your Student ID:* ${idNumber}
 
-Sir check karala group ekata add karai`;
+Sir will check and add you to the group`;
 }
 
 function registrationCancelled() {
-    return `👋 Cancel kala. *menu* type karanna`;
+    return `👋 Cancelled. Type *menu* to go back`;
 }
 
 function confirmBackInvalid() {
-    return `🔙 Receipt eka upload karapu nisa 
-Meken backward yanna ba
+    return `🔙 You already uploaded the receipt
+So you can't go back from here
 
 *yes* = submit | *menu* = cancel`;
 }
 
 function invalidName() {
-    return `❌ Full name eka nawatha check karanna`;
+    return `❌ Please check your full name and try again`;
 }
 
 function invalidSchool() {
-    return `❌ School name eka nawatha check karanna`;
+    return `❌ Please check your school name and try again`;
 }
 
 function submitting() {
@@ -214,34 +214,34 @@ function confirmPrompt() {
 }
 
 function invalidBackMenuNew() {
-    return `❌ 1-6 athare number ekak ewanna`;
+    return `❌ Please enter a number between 1 and 6`;
 }
 
 function invalidBackMenuOld() {
-    return `❌ 1-3 athare number ekak ewanna`;
+    return `❌ Please enter a number between 1 and 3`;
 }
 
 // --- RETURNING STUDENT FLOW ---
 
 function askOldId() {
-    return `🆔 Student ID or phone number eka ewanna
+    return `🆔 Please send your Student ID or phone number
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function oldIdNotFound(input) {
-    return `❌ *${input}* ta student kenek hambune naha.
+    return `❌ No student found with *${input}*.
 
-New admission ekak nam *menu* -> 1 type karanna. Old student kenek nam
-Sir ta call karanna 😊`;
+If you are new, type *menu* → 1.
+If you are an old student, please call Sir 😊`;
 }
 
 function oldIdMultipleMatches(matches) {
-    let list = `🔍 *Me number ekata students:*\n\n`;
+    let list = `🔍 *Students under this number:*\n\n`;
     matches.forEach(m => {
         list += `• *${m.idNumber}* — ${m.name}\n`;
     });
-    list += `\n*Student ID* eka denna`;
+    list += `\n*Please send the Student ID*`;
     return list;
 }
 
@@ -260,34 +260,34 @@ Phone: ${phone}
 }
 
 function oldConfirmInvalid() {
-    return `❌ *yes* or *no* witharak ewanna`;
+    return `❌ Please only reply with *yes* or *no*`;
 }
 
 function oldAskMonth() {
-    return `🗓️ pay karana Month eka mokakda?
+    return `🗓️ Which month are you paying for?
 
 *back* = edit menu | *menu* = exit`;
 }
 
 function oldMonthFee(month, fee) {
-    return `✅ *${month}* walata register kala 👍
+    return `✅ Registered for *${month}* 👍
 
 💰 *Amount:* LKR ${fee}
 
 ${getBankLabel()}
 
-📸 Pay karala Receipt eka upload karanna`;
+📸 After paying, please upload the receipt`;
 }
 
 // --- COMPLAINT ---
 
 function complainPrompt() {
-    return `📝 Complain eka type karanna
-Sir ta send karannam`;
+    return `📝 Please type your complaint
+It will be sent to Sir`;
 }
 
 function complainSent() {
-    return `✅ Send kala. Thank you! 🙏`;
+    return `✅ Sent. Thank you! 🙏`;
 }
 
 // --- ADMIN MESSAGES ---
@@ -337,7 +337,7 @@ function adminListAdmins(admins) {
 }
 
 function adminSetSuccess(field, value) {
-    return `✅ *${field}* update kara: *${value}* 👍
+    return `✅ *${field}* updated to: *${value}* 👍
 Type *settings* to check`;
 }
 
@@ -346,7 +346,7 @@ function adminSetFail(usage) {
 }
 
 function adminOnlyMaster() {
-    return `🚫 Master admin witharai meka karanna puluwan`;
+    return `🚫 Only the master admin can do this`;
 }
 
 function adminBroadcastStart(target) {
@@ -358,7 +358,7 @@ function adminBroadcastDone(success, total) {
 }
 
 function adminNoStudents(grade) {
-    return `ℹ️ Grade ${grade} students hambune naha`;
+    return `ℹ️ No students found in Grade ${grade}`;
 }
 
 function adminCheckPayments(result, grade) {
@@ -397,7 +397,7 @@ function adminCheckPaymentsError(e) {
 }
 
 function adminRemindStart(count) {
-    return `🚀 Reminders ${count} studentslata send karanna...`;
+    return `🚀 Sending reminders to ${count} students...`;
 }
 
 function adminRemindDone(success, failed, total) {
@@ -405,21 +405,21 @@ function adminRemindDone(success, failed, total) {
 }
 
 function adminAllPaid(grade, monthLabel) {
-    return `🎉 Grade ${grade} students siyaluma *${monthLabel}* pay kala!`;
+    return `🎉 All Grade ${grade} students have paid for *${monthLabel}*!`;
 }
 
 function adminReminderMsg(studentName, monthLabel, fee) {
     return `📢 *Payment Reminder*
 
 Hi *${studentName}*,
-*${monthLabel}* walata payment eka karala naha.
+You have not paid for *${monthLabel}*.
 
 💰 *Fee:* LKR ${fee}
 
 ${config.getBankLabel()}
 
-Receipt eka me bot eken upload karanna.
-_Already paid nam ignore karanna_`;
+Please upload the receipt using this bot.
+_If already paid, please ignore this_`;
 }
 
 function adminApprovePrompt(approval, groupsList) {
@@ -431,20 +431,20 @@ function adminApprovePrompt(approval, groupsList) {
 }
 
 function adminApproveSuccess(studentId, groupName) {
-    return `✅ *${studentId}* ${groupName} ekata add kala 👍`;
+    return `✅ *${studentId}* added to ${groupName} 👍`;
 }
 
 function adminApproveNotify(groupName) {
-    return `🎉 *APPROVED!* ${groupName} class ekata add kala 🎓
+    return `🎉 *APPROVED!* Added to ${groupName} class 🎓
 Thank you!`;
 }
 
 function adminRejectSuccess(studentId) {
-    return `✅ *${studentId}* reject kala`;
+    return `✅ *${studentId}* rejected`;
 }
 
 function adminRejectNotify(reason) {
-    return `❌ *Registration Rejected*\nReason: ${reason}\n\nPlease fix karala resubmit karanna`;
+    return `❌ *Registration Rejected*\nReason: ${reason}\n\nPlease fix the issues and resubmit`;
 }
 
 function adminPendingList(list, total) {
@@ -452,12 +452,12 @@ function adminPendingList(list, total) {
     list.forEach((s, i) => {
         msg += `${i + 1}. *${s.idNumber}* — ${s.name}\nGrade ${s.grade} | ${s.months}\n\n`;
     });
-    msg += `_"approve <id>" type karanna_`;
+    msg += `_Type "approve <id>" to approve_`;
     return msg;
 }
 
 function adminNoPending() {
-    return `ℹ️ Pending students hambune naha`;
+    return `ℹ️ No pending students found`;
 }
 
 function adminSearchResults(query, matches) {
@@ -470,7 +470,7 @@ function adminSearchResults(query, matches) {
 }
 
 function adminSearchNoResults(query) {
-    return `ℹ️ "${query}" ta students hambune naha`;
+    return `ℹ️ No students found for "${query}"`;
 }
 
 function adminStudentStatus(student) {
@@ -485,19 +485,19 @@ function adminStudentStatus(student) {
 }
 
 function adminKickSuccess(studentId, reason) {
-    return `👢 *${studentId}* remove kala\nReason: ${reason}`;
+    return `👢 *${studentId}* removed\nReason: ${reason}`;
 }
 
 function adminKickNotify(reason) {
-    return `🚫 *Access Removed*\nReason: ${reason}\n\nMistake ekak nam Sir ta message karanna`;
+    return `🚫 *Access Removed*\nReason: ${reason}\n\nIf this is a mistake, please message Sir`;
 }
 
 function adminDeleteSuccess(studentId) {
-    return `🗑️ *${studentId}* delete kala`;
+    return `🗑️ *${studentId}* deleted`;
 }
 
 function adminEditSuccess(studentId, field, value) {
-    return `✅ *${studentId}* update kala: ${field} -> *${value}*`;
+    return `✅ *${studentId}* updated: ${field} → *${value}*`;
 }
 
 function adminInvalidField(fields) {
@@ -513,7 +513,7 @@ function adminGroupList(groups) {
 }
 
 function adminNotFound() {
-    return `❌ Student hambune naha`;
+    return `❌ Student not found`;
 }
 
 function adminInvalidSelection() {
@@ -521,11 +521,11 @@ function adminInvalidSelection() {
 }
 
 function adminGroupNotSet(name) {
-    return `❌ ${name} configure kala naha`;
+    return `❌ ${name} not configured`;
 }
 
 function adminApprovalNotFound() {
-    return `❌ Pending approval hambune naha`;
+    return `❌ Pending approval not found`;
 }
 
 function adminAlreadyAdmin() {
@@ -533,15 +533,15 @@ function adminAlreadyAdmin() {
 }
 
 function adminNotAdmin() {
-    return `❌ Me ID eka admin naha`;
+    return `❌ This ID is not an admin`;
 }
 
 function adminKickFailNotAdmin() {
-    return `❌ Group eke admin naha mama 😕`;
+    return `❌ I am not an admin in the group 😕`;
 }
 
 function adminKickNoGroup() {
-    return `❌ Me student group ekata add wela naha`;
+    return `❌ This student is not in any group`;
 }
 
 // --- NOTIFICATIONS ---
@@ -560,12 +560,12 @@ function newEnrollmentAlert(data) {
         msg += `\nAddress: ${data.address}`;
     }
     msg += `\nReceipt: ${data.receiptUrl}\n\n`;
-    msg += `"approve ${data.idNumber}" type karanna`;
+    msg += `Type "approve ${data.idNumber}" to approve`;
     return msg;
 }
 
 function complainAlert(from, body) {
-    return `📣 *Complain* from ${from}:\n\n${body}`;
+    return `📣 *Complaint* from ${from}:\n\n${body}`;
 }
 
 module.exports = {

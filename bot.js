@@ -96,7 +96,7 @@ async function gracefulShutdown(signal) {
     setIsShuttingDown(true);
     console.warn(`[System] Received ${signal}. Shutting down safely...`);
     try {
-        saveSessionsNow();
+        await saveSessionsNow();
         if (client) {
             console.log('[WhatsApp] Destroying client...');
             await client.destroy();

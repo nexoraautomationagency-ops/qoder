@@ -19,4 +19,4 @@ npm-debug.log*
 # System files
 .DS_Store
 Thumbs.db
-desktop.ini
+desktop.inigit push -u origin master

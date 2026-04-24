@@ -266,7 +266,7 @@ async function handleReceipt(msg, from, data) {
             } catch (err) {
                 console.warn(`[Media] Download attempt ${i + 1} failed:`, err.message);
             }
-            await delay(2000);
+            if (i < 2) await delay(500);
         }
 
         if (!media || !media.data) {
@@ -279,7 +279,7 @@ async function handleReceipt(msg, from, data) {
 
         data.receiptUrl = receiptUrl;
         data.receiptMsgId = msg.id._serialized;
-        saveSessionsNow();
+        await saveSessionsNow();
 
         await sendWA(from, registrationPreview(data));
         userStates.set(from, STATES.CONFIRM);
@@ -298,7 +298,7 @@ async function handleConfirm(from, body, lowerBody, data) {
         try {
             if (data.isNewStudent) {
                 data.idNumber = await generateBatchStudentId(data.grade);
-                saveSessionsNow();
+                await saveSessionsNow();
             }
 
             await upsertStudentData(data);
@@ -388,7 +388,7 @@ async function handleOldMonth(from, body, data) {
     pushHistory(from, STATES.OLD_MONTH, data);
     data.months = resolved;
     data.status = 'Pending';
-        data.fee = data.wantsTutes ? config.TUTE_FEE : config.BASIC_FEE;
+    data.fee = data.wantsTutes ? config.TUTE_FEE : config.BASIC_FEE;
     userStates.set(from, STATES.RECEIPT);
     return await sendWA(from, oldMonthFee(resolved, data.fee));
 }
