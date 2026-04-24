@@ -308,7 +308,12 @@ async function handleApprove(from, body, lowerBody) {
     let studentId = parts[1] ? normalizeStudentId(parts[1]) : null;
 
     if (!studentId && pendingApprovals.size === 1) studentId = Array.from(pendingApprovals.keys())[0];
-    if (!studentId || !pendingApprovals.has(studentId)) {
+    if (!studentId) {
+        if (pendingApprovals.size === 0) return await sendWA(from, adminNoPending());
+        const sorted = Array.from(pendingApprovals.values()).sort((a, b) => (a.grade || 0) - (b.grade || 0));
+        return await sendWA(from, adminPendingList(sorted, pendingApprovals.size));
+    }
+    if (!pendingApprovals.has(studentId)) {
         return await sendWA(from, adminSetFail('approve <id>'));
     }
 

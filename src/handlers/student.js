@@ -328,6 +328,7 @@ async function handleConfirm(from, body, lowerBody, data) {
             console.error('[Confirm] Error:', e.message);
             return await sendWA(from, systemError());
         }
+        return;
     }
 
     if (lowerBody === 'no') {
