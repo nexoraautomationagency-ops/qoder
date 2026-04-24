@@ -64,8 +64,7 @@ async function routeMessage(msg, client) {
     } catch (globalError) {
         console.error(`[Message Handler] Unhandled Error from ${from}:`, globalError.stack || globalError.message);
         try {
-            const { resetUser } = require('./state-machine');
-            resetUser(from);
+            stateMachine.resetUser(from);
             await sendWA(from, systemError());
         } catch (e) {
             console.error(`[Message Handler] Failed to send error recovery:`, e.message);

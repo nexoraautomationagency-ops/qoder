@@ -282,18 +282,19 @@ async function handleChooseGroup(msg, from, body) {
         try {
             const targetAddId = approval.contactId || approval.phone;
             await addStudentToGroup(group.id, targetAddId);
-            await sendWA(from, adminApproveSuccess(approval.idNumber, group.name));
-
-            const notifyJid = approval.contactId || (approval.phone ? `${cleanPhoneNumber(approval.phone)}@c.us` : null);
-            if (notifyJid) {
-                await sendWA(notifyJid, adminApproveNotify(group.name)).catch(e => console.warn(`Failed to notify ${approval.idNumber}:`, e.message));
-            }
 
             approval.status = 'Approved';
             approval.groupId = group.id;
             await upsertStudentData(approval, 'Approved');
             pendingApprovals.delete(aState.studentId);
             adminStates.delete(from);
+
+            await sendWA(from, adminApproveSuccess(approval.idNumber, group.name));
+
+            const notifyJid = approval.contactId || (approval.phone ? `${cleanPhoneNumber(approval.phone)}@c.us` : null);
+            if (notifyJid) {
+                await sendWA(notifyJid, adminApproveNotify(group.name)).catch(e => console.warn(`Failed to notify ${approval.idNumber}:`, e.message));
+            }
         } catch (error) {
             await sendWA(from, `❌ Failed: ${error.message}`);
         }
@@ -329,10 +330,11 @@ async function handleReject(from, body) {
     approvalQueue = approvalQueue.then(async () => {
         try {
             const student = pendingApprovals.get(studentId);
-            await sendWA(student.contactId, adminRejectNotify(reason));
             student.status = 'Rejected';
             await upsertStudentData(student, 'Rejected');
             pendingApprovals.delete(studentId);
+
+            await sendWA(student.contactId, adminRejectNotify(reason));
             return await sendWA(from, adminRejectSuccess(studentId));
         } catch (e) {
             await sendWA(from, `❌ Rejection failed: ${e.message}`);
@@ -371,9 +373,10 @@ async function handleKick(msg, from, body) {
 
     try {
         await removeStudentFromGroup(student.groupId, student.contactId);
-        await sendWA(student.contactId, adminKickNotify(reason));
         student.status = 'Kicked';
         await upsertStudentData(student, 'Kicked');
+
+        await sendWA(student.contactId, adminKickNotify(reason));
         return await sendWA(from, adminKickSuccess(studentId, reason));
     } catch (e) {
         if (e.message.includes('not an admin')) return await sendWA(from, adminKickFailNotAdmin());

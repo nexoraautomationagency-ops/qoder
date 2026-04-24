@@ -299,9 +299,9 @@ async function handleReceipt(msg, from, data) {
 
 async function handleConfirm(from, body, lowerBody, data) {
     if (lowerBody === 'yes') {
-        await sendWA(from, submitting());
-
         try {
+            await sendWA(from, submitting());
+
             if (data.isNewStudent) {
                 data.idNumber = await generateBatchStudentId(data.grade);
                 await saveSessionsNow();
@@ -310,16 +310,20 @@ async function handleConfirm(from, body, lowerBody, data) {
             await upsertStudentData(data);
             pendingApprovals.set(data.idNumber, { ...data, status: 'Pending' });
 
-            await notifyAdmins(newEnrollmentAlert(data));
-
-            if (data.receiptMsgId) {
-                for (const admin of config.ADMIN_NUMBERS) {
-                    await forwardMessage(data.receiptMsgId, admin);
-                }
-            }
-
             resetUser(from);
-            return await sendWA(from, registrationSubmitted(data.idNumber));
+            await sendWA(from, registrationSubmitted(data.idNumber));
+
+            // Notifications are best-effort after user sees success
+            try {
+                await notifyAdmins(newEnrollmentAlert(data));
+                if (data.receiptMsgId) {
+                    for (const admin of config.ADMIN_NUMBERS) {
+                        await forwardMessage(data.receiptMsgId, admin);
+                    }
+                }
+            } catch (notifyErr) {
+                console.error('[Confirm] Admin notification failed (enrollment saved):', notifyErr.message);
+            }
         } catch (e) {
             console.error('[Confirm] Error:', e.message);
             return await sendWA(from, systemError());

@@ -175,7 +175,7 @@ async function loadStudentsFromSheets(registeredStudentIds, pendingApprovals) {
 
             const rows = response.data.values || [];
             if (rows.length > 1) {
-                const headers = rows[0].map(h => h.trim().toLowerCase());
+                const headers = rows[0].map(h => (h || '').trim().toLowerCase());
                 const findIndex = (search) => headers.findIndex(h => h.includes(search.toLowerCase()));
 
                 const idIdx = findIndex('Student ID');
@@ -488,7 +488,7 @@ async function getMonthlyPayments(grade, monthRaw, registeredStudentIds) {
 
             const rows = res.data.values || [];
             if (rows.length > 1) {
-                const headers = rows[0].map(h => h.trim().toLowerCase());
+                const headers = rows[0].map(h => (h || '').trim().toLowerCase());
                 const idIdx = headers.findIndex(h => h.includes('student id'));
                 const statusIdx = headers.findIndex(h => h.includes('status'));
 
