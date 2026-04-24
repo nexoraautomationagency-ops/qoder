@@ -1,0 +1,22 @@
+# Dependency directories
+node_modules/
+
+# Environment and sensitive credentials
+.env
+*.json
+!package.json
+!package-lock.json
+
+# WhatsApp Session and Auth data
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# System files
+.DS_Store
+Thumbs.db
+desktop.ini
