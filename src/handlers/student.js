@@ -279,10 +279,16 @@ async function handleReceipt(msg, from, data) {
 
         data.receiptUrl = receiptUrl;
         data.receiptMsgId = msg.id._serialized;
+        userStates.set(from, STATES.CONFIRM);
         await saveSessionsNow();
 
-        await sendWA(from, registrationPreview(data));
-        userStates.set(from, STATES.CONFIRM);
+        try {
+            await sendWA(from, registrationPreview(data));
+        } catch (sendErr) {
+            console.error('[Media] Failed to send preview (receipt already saved):', sendErr.message);
+            await delay(500);
+            await sendWA(from, registrationPreview(data)).catch(() => {});
+        }
     } catch (e) {
         console.error('[Media] Error handling receipt:', e.message);
         return await sendWA(from, receiptUploadFailed());
