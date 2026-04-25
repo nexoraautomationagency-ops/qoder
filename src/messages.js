@@ -256,7 +256,7 @@ Phone: ${phone}
 
 *yes* = continue | *no* = change ID
 
-*back* = edit menu | *menu* = exit`;
+*menu* = exit`;
 }
 
 function oldConfirmInvalid() {
