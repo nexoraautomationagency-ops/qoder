@@ -14,7 +14,8 @@ const {
     adminKickSuccess, adminKickNotify, adminDeleteSuccess, adminEditSuccess,
     adminInvalidField, adminGroupList, adminNotFound, adminInvalidSelection,
     adminGroupNotSet, adminApprovalNotFound, adminAlreadyAdmin, adminNotAdmin,
-    adminKickFailNotAdmin, adminKickNoGroup
+    adminKickFailNotAdmin, adminKickNoGroup,
+    adminGraduationConfirm, adminGraduationDone
 } = require('../messages');
 const {
     upsertStudentData, getMonthlyPayments, saveComplaintToSheets
@@ -111,6 +112,11 @@ async function handleAdminCommand(msg, from, body, lowerBody) {
     if (lowerBody.startsWith('edit student ')) {
         return await handleEditStudent(from, body);
     }
+
+    // endyear — graduate Grade 11 and promote all other grades
+    if (lowerBody === 'endyear' || lowerBody === 'endyear confirm') {
+        return await handleEndYear(msg, from, lowerBody);
+    }
 }
 
 async function handleSetCommand(msg, from, body, lowerBody) {
@@ -192,7 +198,7 @@ async function handleBroadcast(from, body, lowerBody) {
         announcement = announcement.substring(gradeMatch[0].length).trim();
     }
 
-    let students = Array.from(registeredStudentIds.values());
+    let students = Array.from(registeredStudentIds.values()).filter(s => s.status !== 'Graduated' && s.status !== 'DELETED' && s.status !== 'Kicked' && s.status !== 'Rejected');
     if (targetGrade) {
         students = students.filter(s => s.grade === targetGrade);
         if (students.length === 0) return await sendWA(from, adminNoStudents(targetGrade));
@@ -354,7 +360,7 @@ async function handleSearchName(from, body, lowerBody) {
     if (query.length < 3) return await sendWA(from, adminSetFail('search name <text> (min 3 chars)'));
 
     const matches = Array.from(registeredStudentIds.values())
-        .filter(s => s.name.toLowerCase().includes(query) || (s.school && s.school.toLowerCase().includes(query)));
+        .filter(s => s.status !== 'Graduated' && (s.name.toLowerCase().includes(query) || (s.school && s.school.toLowerCase().includes(query))));
 
     if (matches.length === 0) return await sendWA(from, adminSearchNoResults(query));
     return await sendWA(from, adminSearchResults(query, matches));
@@ -447,4 +453,51 @@ async function handleEditStudent(from, body) {
     }
 }
 
-module.exports = { handleAdminCommand };
+async function handleEndYear(msg, from, lowerBody) {
+    if (!isMasterAdmin(msg, from)) return await sendWA(from, adminOnlyMaster());
+
+    if (lowerBody !== 'endyear confirm') {
+        const all = Array.from(registeredStudentIds.values())
+            .filter(s => s.status !== 'DELETED' && s.status !== 'Kicked' && s.status !== 'Rejected' && s.status !== 'Graduated');
+        const toGraduate = all.filter(s => parseInt(s.grade) === 11 && s.status !== 'Pending');
+        const toPromote = all.filter(s => parseInt(s.grade) >= 6 && parseInt(s.grade) <= 10 && s.status !== 'Pending');
+        const pending = all.filter(s => s.status === 'Pending');
+        return await sendWA(from, adminGraduationConfirm(toGraduate, toPromote, pending));
+    }
+
+    await sendWA(from, '⏳ *End of Year Transition* in progress\u2026\nPlease wait — this may take a few minutes.');
+
+    const all = Array.from(registeredStudentIds.values());
+    let graduated = 0, promoted = 0, errors = 0, pendingSkipped = 0;
+    const errorsList = [];
+
+    for (const student of all) {
+        const grade = parseInt(student.grade);
+        const status = (student.status || '').toLowerCase();
+        if (['deleted', 'kicked', 'rejected', 'graduated'].includes(status)) continue;
+        if (status === 'pending') { pendingSkipped++; continue; }
+
+        try {
+            if (grade === 11) {
+                student.status = 'Graduated';
+                await upsertStudentData(student, 'Graduated');
+                pendingApprovals.delete(student.idNumber);
+                graduated++;
+            } else if (grade >= 6 && grade <= 10) {
+                const oldGrade = student.grade;
+                student.grade = grade + 1;
+                // skipMonthly=true: preserve historical monthly records in old grade folder
+                await upsertStudentData(student, null, oldGrade, null, true);
+                promoted++;
+            }
+        } catch (e) {
+            console.error(`[EndYear] Failed for ${student.idNumber}:`, e.message);
+            errors++;
+            errorsList.push(`${student.idNumber}: ${e.message}`);
+        }
+    }
+
+    return await sendWA(from, adminGraduationDone(graduated, promoted, errors, pendingSkipped, errorsList));
+}
+
+module.exports = { handleAdminCommand, handleEndYear };

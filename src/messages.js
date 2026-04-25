@@ -319,7 +319,7 @@ function adminHelp() {
 • approve <id> | reject <id> <reason>
 • kick <id> | delete student <id>
 • edit student <id> <field> <value>
-• getgroups`;
+• getgroups | endyear`;
 }
 
 function adminSettings() {
@@ -544,6 +544,46 @@ function adminKickNoGroup() {
     return `❌ This student is not in any group`;
 }
 
+// --- GRADUATION ---
+
+function adminGraduationConfirm(toGraduate, toPromote, pending) {
+    let msg = `🎓 *END OF YEAR TRANSITION*\n\n`;
+    msg += `This will:\n`;
+    msg += `✅ Graduate *${toGraduate.length}* Grade-11 students\n`;
+    msg += `✅ Promote *${toPromote.length}* students (Grade 6→7, 7→8, ... 10→11)\n`;
+    if (pending.length > 0) msg += `⏭️ Skip *${pending.length}* pending students (approve or reject them first)\n`;
+    msg += `\nGraduated students:\n`;
+    if (toGraduate.length === 0) {
+        msg += `• None\n`;
+    } else {
+        toGraduate.slice(0, 10).forEach(s => msg += `• ${s.idNumber} — ${s.name}\n`);
+        if (toGraduate.length > 10) msg += `...and ${toGraduate.length - 10} more\n`;
+    }
+    msg += `\n⚠️ *This cannot be undone!*\n\n`;
+    msg += `Type *endyear confirm* to proceed`;
+    return msg;
+}
+
+function adminGraduationDone(graduated, promoted, errors, pendingSkipped, errorsList) {
+    let msg = `✅ *Year-End Complete!*\n\n`;
+    msg += `🎓 Graduated: ${graduated}\n`;
+    msg += `📈 Promoted: ${promoted}\n`;
+    if (pendingSkipped > 0) msg += `⏭️ Skipped (pending): ${pendingSkipped}\n`;
+    if (errors > 0) {
+        msg += `❌ Errors: ${errors}\n`;
+        errorsList.slice(0, 5).forEach(e => msg += `• ${e}\n`);
+    }
+    msg += `\nType *settings* to check`;
+    return msg;
+}
+
+function studentGraduated(name) {
+    return `🎓 Hi *${name}*!\n\n`
+    + `You have completed your O-Levels and graduated.\n`
+    + `This bot is for current students only.\n\n`
+    + `Thank you and best wishes for your future! 🌟`;
+}
+
 // --- NOTIFICATIONS ---
 
 function newEnrollmentAlert(data) {
@@ -652,6 +692,9 @@ module.exports = {
     adminNotAdmin,
     adminKickFailNotAdmin,
     adminKickNoGroup,
+    adminGraduationConfirm,
+    adminGraduationDone,
+    studentGraduated,
     newEnrollmentAlert,
     complainAlert
 };

@@ -15,7 +15,8 @@ const {
     askOldId, oldIdNotFound,
     oldIdMultipleMatches, oldIdFoundAuto, oldConfirm, oldConfirmInvalid,
     oldAskMonth, oldMonthFee, complainPrompt, complainSent,
-    newEnrollmentAlert, complainAlert, systemError
+    newEnrollmentAlert, complainAlert, systemError,
+    studentGraduated
 } = require('../messages');
 const { uploadReceiptToDrive, upsertStudentData, generateBatchStudentId, saveComplaintToSheets } = require('../google-api');
 
@@ -188,7 +189,7 @@ async function handlePhone(from, body, data) {
     const cleanedInput = cleanPhoneNumber(body);
     data.phone = cleanedInput;
 
-    const matches = Array.from(registeredStudentIds.values()).filter(s => cleanPhoneNumber(s.phone) === cleanedInput);
+    const matches = Array.from(registeredStudentIds.values()).filter(s => s.status !== 'Graduated' && cleanPhoneNumber(s.phone) === cleanedInput);
     if (matches.length > 0) {
         const studentNames = matches.map(m => m.name).join(', ');
         await sendWA(from, phoneAlreadyRegistered(studentNames));
@@ -303,7 +304,9 @@ async function handleConfirm(from, body, lowerBody, data) {
             await sendWA(from, submitting());
 
             if (data.isNewStudent) {
-                data.idNumber = await generateBatchStudentId(data.grade);
+                const genResult = await generateBatchStudentId(data.grade);
+                data.idNumber = genResult.idNumber;
+                data.batchYear = genResult.batchYear;
                 await saveSessionsNow();
             }
 
@@ -359,6 +362,11 @@ async function handleOldId(from, body, data) {
     }
 
     if (!existing) return await sendWA(from, oldIdNotFound(body));
+
+    if (existing.status === 'Graduated') {
+        resetUser(from);
+        return await sendWA(from, studentGraduated(existing.name));
+    }
 
     pushHistory(from, STATES.OLD_ID, data);
     Object.assign(data, existing);

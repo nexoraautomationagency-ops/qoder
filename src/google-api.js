@@ -222,6 +222,12 @@ async function loadStudentsFromSheets(registeredStudentIds, pendingApprovals) {
 
                     studentObj.contactId = studentObj.phone ? (studentObj.phone.includes('@') ? studentObj.phone : `${cleanPhoneNumber(studentObj.phone)}@c.us`) : null;
 
+                    // batchYear is the student's OL cohort year — fixed forever, never recalculated
+                    const digitsOnly = normalizedId.replace(/\D/g, '');
+                    studentObj.batchYear = digitsOnly.length >= 6
+                        ? 2000 + parseInt(digitsOnly.substring(0, 2), 10)
+                        : new Date().getFullYear() + (11 - studentObj.grade);
+
                     registeredStudentIds.set(normalizedId, studentObj);
 
                     if (studentObj.status === 'Pending') {
@@ -241,12 +247,12 @@ async function loadStudentsFromSheets(registeredStudentIds, pendingApprovals) {
     }
 }
 
-async function upsertStudentData(studentData, forceStatus = null, oldGrade = null, oldMonth = null) {
+async function upsertStudentData(studentData, forceStatus = null, oldGrade = null, oldMonth = null, skipMonthly = false) {
     return await executeWithRetry(async () => {
         const sheets = await getSheetsClient();
         const drive = await getDriveClient();
 
-        if (oldGrade !== null || oldMonth !== null) {
+        if (!skipMonthly && (oldGrade !== null || oldMonth !== null)) {
             const lastGrade = oldGrade !== null ? oldGrade : studentData.grade;
             const lastMonth = oldMonth !== null ? oldMonth : studentData.months;
             if (parseInt(lastGrade) !== parseInt(studentData.grade) || lastMonth !== studentData.months) {
@@ -272,8 +278,8 @@ async function upsertStudentData(studentData, forceStatus = null, oldGrade = nul
             studentData.groupId || ''
         ]];
 
-        // Master
-        const batchYear = new Date().getFullYear() + (11 - parseInt(studentData.grade, 10));
+        // Master — batch year is the OL cohort (fixed at registration, never changes with promotion)
+        const batchYear = studentData.batchYear || (new Date().getFullYear() + (11 - parseInt(studentData.grade, 10)));
         const batchSheetName = `Batch ${batchYear}`;
         await getOrCreateSheet(sheets, MASTER_BACKUP_SPREADSHEET_ID, batchSheetName);
 
@@ -300,32 +306,34 @@ async function upsertStudentData(studentData, forceStatus = null, oldGrade = nul
             });
         }
 
-        // Monthly
-        const folderId = await getOrCreateFolder(drive, MAIN_DATABASE_FOLDER_ID, `Grade ${studentData.grade}`);
-        const monthlyFileId = await getOrCreateMonthlySpreadsheet(drive, sheets, folderId, monthLabel);
-        const monthlySheetTitle = await getMainSheetTitle(sheets, monthlyFileId);
+        if (!skipMonthly) {
+            // Monthly
+            const folderId = await getOrCreateFolder(drive, MAIN_DATABASE_FOLDER_ID, `Grade ${studentData.grade}`);
+            const monthlyFileId = await getOrCreateMonthlySpreadsheet(drive, sheets, folderId, monthLabel);
+            const monthlySheetTitle = await getMainSheetTitle(sheets, monthlyFileId);
 
-        const monthRes = await sheets.spreadsheets.values.get({
-            spreadsheetId: monthlyFileId,
-            range: `${monthlySheetTitle}!A:L`
-        });
-        const monthRows = monthRes.data.values || [];
-        const moIndex = monthRows.findIndex(r => normalizeStudentId(r[0]) === studentData.idNumber);
+            const monthRes = await sheets.spreadsheets.values.get({
+                spreadsheetId: monthlyFileId,
+                range: `${monthlySheetTitle}!A:L`
+            });
+            const monthRows = monthRes.data.values || [];
+            const moIndex = monthRows.findIndex(r => normalizeStudentId(r[0]) === studentData.idNumber);
 
-        if (moIndex >= 0) {
-            await sheets.spreadsheets.values.update({
-                spreadsheetId: monthlyFileId,
-                range: `${monthlySheetTitle}!A${moIndex + 1}:L${moIndex + 1}`,
-                valueInputOption: 'RAW',
-                resource: { values: rowValues }
-            });
-        } else {
-            await sheets.spreadsheets.values.append({
-                spreadsheetId: monthlyFileId,
-                range: `${monthlySheetTitle}!A:L`,
-                valueInputOption: 'RAW',
-                resource: { values: rowValues }
-            });
+            if (moIndex >= 0) {
+                await sheets.spreadsheets.values.update({
+                    spreadsheetId: monthlyFileId,
+                    range: `${monthlySheetTitle}!A${moIndex + 1}:L${moIndex + 1}`,
+                    valueInputOption: 'RAW',
+                    resource: { values: rowValues }
+                });
+            } else {
+                await sheets.spreadsheets.values.append({
+                    spreadsheetId: monthlyFileId,
+                    range: `${monthlySheetTitle}!A:L`,
+                    valueInputOption: 'RAW',
+                    resource: { values: rowValues }
+                });
+            }
         }
 
         registeredStudentIds.set(studentData.idNumber, { ...studentData, status });
@@ -463,7 +471,7 @@ async function getMonthlyPayments(grade, monthRaw, registeredStudentIds) {
     if (isNaN(gradeNum) || gradeNum < 6 || gradeNum > 11) return null;
 
     const allStudents = Array.from(registeredStudentIds.values())
-        .filter(s => parseInt(s.grade, 10) === gradeNum && s.status !== 'DELETED' && s.status !== 'Rejected' && s.status !== 'Kicked');
+        .filter(s => parseInt(s.grade, 10) === gradeNum && s.status !== 'DELETED' && s.status !== 'Rejected' && s.status !== 'Kicked' && s.status !== 'Graduated');
 
     if (allStudents.length === 0) return { paid: [], unpaid: [], pending: [], monthLabel, total: 0 };
 
@@ -586,7 +594,8 @@ async function _doGenerateBatchStudentId(grade) {
         });
     }
 
-    return `${batchPrefix}${String(nextSerial).padStart(4, '0')}`;
+    const idNumber = `${batchPrefix}${String(nextSerial).padStart(4, '0')}`;
+    return { idNumber, batchYear };
 }
 
 module.exports = {
