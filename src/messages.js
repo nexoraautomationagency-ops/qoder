@@ -61,7 +61,7 @@ _Type the number_`;
 // --- REGISTRATION FLOW ---
 
 function askName() {
-    return `🤝 Please send your full name
+    return `👤 Please send your full name
 
 *back* = edit menu | *menu* = exit`;
 }
@@ -70,14 +70,14 @@ function askSchool(name) {
     return `Nice to meet you, *${name}*! 😊
 Which school do you go to?
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function askPhone() {
     return `📱 Please send your phone number
 (Example: 0771234567)
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function phoneInvalid() {
@@ -96,7 +96,7 @@ What is your grade? (6-11)`;
 function askGrade() {
     return `What is your grade? (6-11)
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function gradeInvalid() {
@@ -107,7 +107,7 @@ function askMonth() {
     return `🗓️ Which month are you paying for?
 (Example: April)
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function monthInvalid() {
@@ -119,13 +119,13 @@ function monthRegistered(month) {
     return `✅ Registered for *${month}* 👍
 Want tutes? (yes / no)
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function askTutes() {
     return `📦 Want tutes? (yes / no)
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function tutesInvalid() {
@@ -136,7 +136,7 @@ function askAddress() {
     return `🏠 Please send your full address
 So we can post the tutes to you
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function feeInfo(fee) {
@@ -146,7 +146,7 @@ ${getBankLabel()}
 
 📸 After paying, please upload the receipt
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function receiptRequired() {
@@ -266,7 +266,7 @@ function oldConfirmInvalid() {
 function oldAskMonth() {
     return `🗓️ Which month are you paying for?
 
-*back* = edit menu | *menu* = exit`;
+*back*   |   *menu*`;
 }
 
 function oldMonthFee(month, fee) {
@@ -580,9 +580,9 @@ function adminGraduationDone(graduated, promoted, errors, pendingSkipped, errors
 
 function studentGraduated(name) {
     return `🎓 Hi *${name}*!\n\n`
-    + `You have completed your O-Levels and graduated.\n`
-    + `This bot is for current students only.\n\n`
-    + `Thank you and best wishes for your future! 🌟`;
+        + `You have completed your O-Levels and graduated.\n`
+        + `This bot is for current students only.\n\n`
+        + `Thank you and best wishes for your future! 🌟`;
 }
 
 // --- NOTIFICATIONS ---
