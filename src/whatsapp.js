@@ -36,24 +36,17 @@ async function sendWA(to, text, options = {}) {
 
         console.log(`[Outgoing] To ${recipient}: ${typeof text === 'string' ? text.slice(0, 60).replace(/\n/g, ' ') + '...' : '[Media]'}`);
 
-        // Retry on "Promise was collected" errors (known whatsapp-web.js/Chromium issue)
-        let lastErr;
-        for (let attempt = 0; attempt < 3; attempt++) {
-            try {
-                const result = await clientInstance.sendMessage(recipient, text, options);
-                await delay(OUTBOUND_DELAY_MS);
-                return result;
-            } catch (err) {
-                lastErr = err;
-                if (err.message && err.message.includes('Promise was collected') && attempt < 2) {
-                    console.warn(`[Outgoing] Promise collected, retry ${attempt + 1}/2 for ${recipient}`);
-                    await delay(300);
-                    continue;
-                }
-                throw err;
+        try {
+            const result = await clientInstance.sendMessage(recipient, text, options);
+            await delay(OUTBOUND_DELAY_MS);
+            return result;
+        } catch (err) {
+            if (err.message && err.message.includes('Promise was collected')) {
+                console.warn(`[Outgoing] Promise collected for ${recipient}. The message was likely sent, ignoring to prevent duplicates.`);
+                return true;
             }
+            throw err;
         }
-        throw lastErr;
     } catch (err) {
         console.error(`Failed to send message to ${to}:`, err.message);
         throw err;
