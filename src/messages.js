@@ -74,7 +74,7 @@ Which school do you go to?
 }
 
 function askPhone() {
-    return `📱 Please send your phone number
+    return `🔹 Please send your phone number
 (Example: 0771234567)
 
 *back*   |   *menu*`;
