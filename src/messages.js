@@ -9,7 +9,6 @@ const { getBankLabel } = require('./config');
 function mainMenu() {
     return `Welcome to *${config.SCHOOL_NAME}*! 🎓
 
-
 *Choose an option by typing the number*
 
 1️⃣ New admission
