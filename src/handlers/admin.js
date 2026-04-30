@@ -152,9 +152,12 @@ async function handleSetCommand(msg, from, body, lowerBody) {
 
     if (target === 'group') {
         const grade = parseInt(parts[2], 10);
-        const groupId = parts[3];
-        if (Number.isInteger(grade) && grade >= 6 && grade <= 11 && groupId && updateEnvFile(`GROUP_ID_${grade}`, groupId)) {
-            return await sendWA(from, adminSetSuccess(`Grade ${grade} Group`, groupId));
+        let groupId = parts[3];
+        if (Number.isInteger(grade) && grade >= 6 && grade <= 11 && groupId) {
+            if (!groupId.includes('@')) groupId = `${groupId}@g.us`;
+            if (updateEnvFile(`GROUP_ID_${grade}`, groupId)) {
+                return await sendWA(from, adminSetSuccess(`Grade ${grade} Group`, groupId));
+            }
         }
         return await sendWA(from, adminSetFail('set group <6-11> <id>'));
     }
@@ -404,6 +407,7 @@ async function handleDeleteStudent(msg, from, body) {
     student.status = 'DELETED';
     await upsertStudentData(student, 'DELETED');
     registeredStudentIds.delete(studentId);
+    pendingApprovals.delete(studentId);
     return await sendWA(from, adminDeleteSuccess(studentId));
 }
 

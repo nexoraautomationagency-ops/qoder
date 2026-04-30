@@ -573,7 +573,7 @@ async function _doGenerateBatchStudentId(grade) {
         range: 'SystemData!A:B'
     });
     const rows = res.data.values || [];
-    let rowIndex = rows.findIndex(r => r[0] === batchYear);
+    let rowIndex = rows.findIndex(r => parseInt(r[0], 10) === batchYear);
     let nextSerial = 1;
 
     if (rowIndex >= 0) {

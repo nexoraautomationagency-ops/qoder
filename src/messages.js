@@ -505,11 +505,12 @@ function adminInvalidField(fields) {
 }
 
 function adminGroupList(groups) {
+    if (!groups || groups.length === 0) return 'No groups found.';
     let list = '📂 *Groups:*\n\n';
     groups.forEach(g => {
         list += `*${g.name}*\nID: ${g.id._serialized}\n\n`;
     });
-    return list || 'No groups found.';
+    return list;
 }
 
 function adminNotFound() {
