@@ -13,7 +13,9 @@ function mainMenu() {
 
 1️⃣ New admission
 2️⃣ Pay monthly fees  
-3️⃣ Complain`;
+3️⃣ Complain
+
+_Type *menu* anytime to come back here_`;
 }
 
 function tooManyMessages() {
@@ -22,15 +24,17 @@ Please wait a bit and try again`;
 }
 
 function systemError() {
-    return `❌ Something went wrong 😕`;
+    return `❌ Something went wrong 😕
+Type *menu* to start again`;
 }
 
 function cancelDone() {
-    return `👋 Cancelled.`;
+    return `👋 Cancelled. Type *menu* to go back`;
 }
 
 function backInvalid() {
-    return `🔙 You can't go back from here 😕`;
+    return `🔙 You can't go back from here 😕
+Type *menu* to start over`;
 }
 
 function backMenuNewStudent() {
@@ -154,7 +158,7 @@ Tutes: ${data.wantsTutes ? 'Yes' : 'No'}`;
     if (data.wantsTutes && data.address) {
         preview += `\nAddress: ${data.address}`;
     }
-    preview += `\n\n*yes* = submit`;
+    preview += `\n\n*yes* = submit | *menu* = cancel`;
     return preview;
 }
 
@@ -167,14 +171,14 @@ Sir will check and add you to the group`;
 }
 
 function registrationCancelled() {
-    return `👋 Cancelled.`;
+    return `👋 Cancelled. Type *menu* to go back`;
 }
 
 function confirmBackInvalid() {
     return `🔙 You already uploaded the receipt
 So you can't go back from here
 
-*yes* = submit`;
+*yes* = submit | *menu* = cancel`;
 }
 
 function invalidName() {
@@ -190,7 +194,7 @@ function submitting() {
 }
 
 function confirmPrompt() {
-    return `*yes* = submit`;
+    return `*yes* = submit | *menu* = cancel`;
 }
 
 function invalidBackMenuNew() {
