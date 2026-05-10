@@ -13,9 +13,7 @@ function mainMenu() {
 
 1️⃣ New admission
 2️⃣ Pay monthly fees  
-3️⃣ Complain
-
-_Type *menu* anytime to come back here_`;
+3️⃣ Complain`;
 }
 
 function tooManyMessages() {
@@ -24,17 +22,15 @@ Please wait a bit and try again`;
 }
 
 function systemError() {
-    return `❌ Something went wrong 😕
-Type *menu* to start again`;
+    return `❌ Something went wrong 😕`;
 }
 
 function cancelDone() {
-    return `👋 Cancelled. Type *menu* to go back`;
+    return `👋 Cancelled.`;
 }
 
 function backInvalid() {
-    return `🔙 You can't go back from here 😕
-Type *menu* to start over`;
+    return `🔙 You can't go back from here 😕`;
 }
 
 function backMenuNewStudent() {
@@ -63,23 +59,17 @@ _Type the number_`;
 // --- REGISTRATION FLOW ---
 
 function askName() {
-    return `👤 Please send your full name
-
-*back* = edit menu | *menu* = exit`;
+    return `👤 Please send your full name`;
 }
 
 function askSchool(name) {
     return `Nice to meet you, *${name}*! 😊
-Which school do you go to?
-
-*back*   |   *menu*`;
+Which school do you go to?`;
 }
 
 function askPhone() {
     return `🔹 Please send your phone number
-(Example: 0771234567)
-
-*back*   |   *menu*`;
+(Example: 0771234567)`;
 }
 
 function phoneInvalid() {
@@ -96,9 +86,7 @@ What is your grade? (6-11)`;
 }
 
 function askGrade() {
-    return `What is your grade? (6-11)
-
-*back*   |   *menu*`;
+    return `What is your grade? (6-11)`;
 }
 
 function gradeInvalid() {
@@ -107,9 +95,7 @@ function gradeInvalid() {
 
 function askMonth() {
     return `🗓️ Which month are you paying for?
-(Example: April)
-
-*back*   |   *menu*`;
+(Example: April)`;
 }
 
 function monthInvalid() {
@@ -119,15 +105,11 @@ Please enter like: April, May`;
 
 function monthRegistered(month) {
     return `✅ Registered for *${month}* 👍
-Want tutes? (yes / no)
-
-*back*   |   *menu*`;
+Want tutes? (yes / no)`;
 }
 
 function askTutes() {
-    return `📦 Want tutes? (yes / no)
-
-*back*   |   *menu*`;
+    return `📦 Want tutes? (yes / no)`;
 }
 
 function tutesInvalid() {
@@ -136,9 +118,7 @@ function tutesInvalid() {
 
 function askAddress() {
     return `🏠 Please send your full address
-So we can post the tutes to you
-
-*back*   |   *menu*`;
+So we can post the tutes to you`;
 }
 
 function feeInfo(fee) {
@@ -146,9 +126,7 @@ function feeInfo(fee) {
 
 ${getBankLabel()}
 
-📸 After paying, please upload the receipt
-
-*back*   |   *menu*`;
+📸 After paying, please upload the receipt`;
 }
 
 function receiptRequired() {
@@ -176,7 +154,7 @@ Tutes: ${data.wantsTutes ? 'Yes' : 'No'}`;
     if (data.wantsTutes && data.address) {
         preview += `\nAddress: ${data.address}`;
     }
-    preview += `\n\n*yes* = submit | *menu* = cancel`;
+    preview += `\n\n*yes* = submit`;
     return preview;
 }
 
@@ -189,14 +167,14 @@ Sir will check and add you to the group`;
 }
 
 function registrationCancelled() {
-    return `👋 Cancelled. Type *menu* to go back`;
+    return `👋 Cancelled.`;
 }
 
 function confirmBackInvalid() {
     return `🔙 You already uploaded the receipt
 So you can't go back from here
 
-*yes* = submit | *menu* = cancel`;
+*yes* = submit`;
 }
 
 function invalidName() {
@@ -212,7 +190,7 @@ function submitting() {
 }
 
 function confirmPrompt() {
-    return `*yes* = submit | *menu* = cancel`;
+    return `*yes* = submit`;
 }
 
 function invalidBackMenuNew() {
@@ -226,9 +204,7 @@ function invalidBackMenuOld() {
 // --- RETURNING STUDENT FLOW ---
 
 function askOldId() {
-    return `🆔 Please send your Student ID or phone number
-
-*back* = edit menu | *menu* = exit`;
+    return `🆔 Please send your Student ID or phone number`;
 }
 
 function oldIdNotFound(input) {
@@ -256,9 +232,7 @@ function oldConfirm(name, grade, phone) {
 Grade: ${grade}
 Phone: ${phone}
 
-*yes* = continue | *no* = change ID
-
-*menu* = exit`;
+*yes* = continue | *no* = change ID`;
 }
 
 function oldConfirmInvalid() {
@@ -266,9 +240,7 @@ function oldConfirmInvalid() {
 }
 
 function oldAskMonth() {
-    return `🗓️ Which month are you paying for?
-
-*back*   |   *menu*`;
+    return `🗓️ Which month are you paying for?`;
 }
 
 function oldMonthFee(month, fee) {
